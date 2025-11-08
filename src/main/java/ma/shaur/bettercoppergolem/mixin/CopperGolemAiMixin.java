@@ -5,12 +5,12 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 import ma.shaur.bettercoppergolem.config.ConfigHandler;
-import net.minecraft.entity.passive.CopperGolemBrain;
+import net.minecraft.world.entity.animal.coppergolem.CopperGolemAi;
 
-@Mixin(CopperGolemBrain.class)
-public class CopperGolemBrainMixin 
+@Mixin(CopperGolemAi.class)
+public class CopperGolemAiMixin 
 {
-	@ModifyConstant(method ="addIdleActivities", constant = @Constant(intValue = 8))
+	@ModifyConstant(method ="initIdleActivity", constant = @Constant(intValue = 8))
 	private static int verticalHeight(int constant)
 	{
 		return ConfigHandler.getConfig().verticalRange + 10;

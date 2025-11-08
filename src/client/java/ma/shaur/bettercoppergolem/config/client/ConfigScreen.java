@@ -10,26 +10,26 @@ import com.google.gson.JsonIOException;
 import ma.shaur.bettercoppergolem.BetterCopperGolemClient;
 import ma.shaur.bettercoppergolem.config.Config;
 import ma.shaur.bettercoppergolem.config.ConfigHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.ContainerWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.TextWidget.TextOverflow;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.client.option.SimpleOption.TooltipFactory;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.OptionInstance.TooltipSupplier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractContainerWidget;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.StringWidget.TextOverflow;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
-public class ConfigScreen extends GameOptionsScreen 
+public class ConfigScreen extends OptionsSubScreen 
 {
 	private static final Predicate<String> ONLY_INTEGER_NUMBERS_PREDICATE = (s) ->
 	{
@@ -46,9 +46,9 @@ public class ConfigScreen extends GameOptionsScreen
 	};
 
 	@Override
-	protected void initFooter() 
+	protected void addFooter() 
 	{
-		this.layout.addFooter(new Container(308, 20, List.of(ButtonWidget.builder(ScreenTexts.DONE, (button) -> this.close()).width(150).build(), ButtonWidget.builder(Text.translatable("bettercoppergolem.options.reset"), (button) -> this.setDefaultValues()).width(150).build()), 8));
+		this.layout.addToFooter(new Container(308, 20, List.of(Button.builder(CommonComponents.GUI_DONE, (button) -> this.onClose()).width(150).build(), Button.builder(Component.translatable("bettercoppergolem.options.reset"), (button) -> this.setDefaultValues()).width(150).build()), 8));
 	}
 	
 	private void setDefaultValues()
@@ -75,46 +75,46 @@ public class ConfigScreen extends GameOptionsScreen
 			BetterCopperGolemClient.LOGGER.error("Error saving config from a config screen: ", e);
 		}
 
-		remove(body);
-		initBody();
-		addDrawableChild(body);
-		refreshWidgetPositions();
+		removeWidget(list);
+		addContents();
+		addRenderableWidget(list);
+		repositionElements();
 	}
 	
 	public ConfigScreen(Screen parent) 
 	{
-		super(parent, MinecraftClient.getInstance().options, Text.translatable("bettercoppergolem.options"));
+		super(parent, Minecraft.getInstance().options, Component.translatable("bettercoppergolem.options"));
 	}
 
 	@Override
 	protected void addOptions() 
 	{
-		if(body == null) return;
+		if(list == null) return;
 		
 		Config config = ConfigHandler.getConfig();
-		body.addAll(SimpleOption.ofBoolean(translationKey("shulker_and_bundle_sorting"), tooltipFactory("shulker_and_bundle_sorting"), config.shulkerAndBundleSorting, b -> config.shulkerAndBundleSorting = b),
-					SimpleOption.ofBoolean(translationKey("ignore_color"), tooltipFactory("ignore_color"), config.ignoreColor, b -> config.ignoreColor = b),
-					SimpleOption.ofBoolean(translationKey("allow_individual_items_match_container_contents"), tooltipFactory("allow_individual_items_match_container_contents"), config.allowIndividualItemsMatchContainerContents, b -> config.allowIndividualItemsMatchContainerContents = b),
-					SimpleOption.ofBoolean(translationKey("allow_inserting_items_into_containers"), tooltipFactory("allow_inserting_items_into_containers"), config.allowInsertingItemsIntoContainers, b -> config.allowInsertingItemsIntoContainers = b));
+		list.addSmall(OptionInstance.createBoolean(translationKey("shulker_and_bundle_sorting"), tooltipFactory("shulker_and_bundle_sorting"), config.shulkerAndBundleSorting, b -> config.shulkerAndBundleSorting = b),
+					  OptionInstance.createBoolean(translationKey("ignore_color"), tooltipFactory("ignore_color"), config.ignoreColor, b -> config.ignoreColor = b),
+					  OptionInstance.createBoolean(translationKey("allow_individual_items_match_container_contents"), tooltipFactory("allow_individual_items_match_container_contents"), config.allowIndividualItemsMatchContainerContents, b -> config.allowIndividualItemsMatchContainerContents = b),
+					  OptionInstance.createBoolean(translationKey("allow_inserting_items_into_containers"), tooltipFactory("allow_inserting_items_into_containers"), config.allowInsertingItemsIntoContainers, b -> config.allowInsertingItemsIntoContainers = b));
 		
-		body.addWidgetEntry(intContainer(Text.translatable(translationKey("max_chest_check_count")),Text.translatable(translationKey("max_chest_check_count.info")), config.maxChestCheckCount, i -> config.maxChestCheckCount = i),
-							intContainer(Text.translatable(translationKey("max_held_item_stack_size")), Text.translatable(translationKey("max_held_item_stack_size.info")), config.maxHeldItemStackSize, i -> config.maxHeldItemStackSize = i));
-		body.addWidgetEntry(intContainer(Text.translatable(translationKey("cooldown_time")),Text.translatable(translationKey("cooldown_time.info")), config.cooldownTime, i -> config.cooldownTime = i), 
-							intContainer(Text.translatable(translationKey("vertical_range")), Text.translatable(translationKey("vertical_range.info")), config.verticalRange, i -> config.verticalRange = i));
-		body.addWidgetEntry(intContainer(Text.translatable(translationKey("interaction_time")),Text.translatable(translationKey("interaction_time.info")), config.interactionTime, i -> config.interactionTime = i),
-							SimpleOption.ofBoolean(translationKey("match_oxidation_level"), tooltipFactory("match_oxidation_level"), config.matchOxidationLevel, b -> config.matchOxidationLevel = b).createWidget(gameOptions));
+		list.addSmall(intContainer(Component.translatable(translationKey("max_chest_check_count")),Component.translatable(translationKey("max_chest_check_count.info")), config.maxChestCheckCount, i -> config.maxChestCheckCount = i),
+					  intContainer(Component.translatable(translationKey("max_held_item_stack_size")), Component.translatable(translationKey("max_held_item_stack_size.info")), config.maxHeldItemStackSize, i -> config.maxHeldItemStackSize = i));
+		list.addSmall(intContainer(Component.translatable(translationKey("cooldown_time")),Component.translatable(translationKey("cooldown_time.info")), config.cooldownTime, i -> config.cooldownTime = i), 
+					  intContainer(Component.translatable(translationKey("vertical_range")), Component.translatable(translationKey("vertical_range.info")), config.verticalRange, i -> config.verticalRange = i));
+		list.addSmall(intContainer(Component.translatable(translationKey("interaction_time")),Component.translatable(translationKey("interaction_time.info")), config.interactionTime, i -> config.interactionTime = i),
+					  OptionInstance.createBoolean(translationKey("match_oxidation_level"), tooltipFactory("match_oxidation_level"), config.matchOxidationLevel, b -> config.matchOxidationLevel = b).createButton(options));
 	}
 	
-	private Container intContainer(Text text, Text tooltip, int value, ChangeListener listener)
+	private Container intContainer(Component text, Component tooltip, int value, ChangeListener listener)
 	{
-		TextWidget textWidget = new TextWidget(100, 20, text, textRenderer);
+		StringWidget textWidget = new StringWidget(100, 20, text, font);
 		textWidget.setMaxWidth(0, TextOverflow.SCROLLING);
 		
-		TextFieldWidget field = new TextFieldWidget(textRenderer, 50, 20, ScreenTexts.EMPTY);
-		field.setText(Integer.toString(value));
+		EditBox field = new EditBox(font, 50, 20, CommonComponents.EMPTY);
+		field.setValue(Integer.toString(value));
 		field.setCentered(true);
-		field.setTextPredicate(ONLY_INTEGER_NUMBERS_PREDICATE);
-		field.setChangedListener(s -> 
+		field.setFilter(ONLY_INTEGER_NUMBERS_PREDICATE);
+		field.setResponder(s -> 
 		{
 			try
 			{
@@ -124,7 +124,7 @@ public class ConfigScreen extends GameOptionsScreen
 		});
 
 		Container layout = new Container(150, 20, List.of(textWidget, field));
-		layout.setTooltip(Tooltip.of(tooltip));
+		layout.setTooltip(Tooltip.create(tooltip));
 		
 		return layout;
 	}
@@ -142,17 +142,17 @@ public class ConfigScreen extends GameOptionsScreen
 		}
 	}
 	
-	private static TooltipFactory<Boolean> tooltipFactory(String id) 
+	private static TooltipSupplier<Boolean> tooltipFactory(String id) 
 	{
 		id = translationKey(id);
-		MutableText text = Text.translatableWithFallback(id + ".info", "");
-		Text infoTrue = Text.translatableWithFallback(id + ".info.true", "");
-		Text infoFalse = Text.translatableWithFallback(id + ".info.false", "");
+		MutableComponent text = Component.translatableWithFallback(id + ".info", "");
+		Component infoTrue = Component.translatableWithFallback(id + ".info.true", "");
+		Component infoFalse = Component.translatableWithFallback(id + ".info.false", "");
 
 		if(!infoTrue.getString().isEmpty()) text.append("\n").append(infoTrue);
 		if(!infoFalse.getString().isEmpty()) text.append("\n").append(infoFalse);
 		
-		return (b) -> text.getString().isEmpty() ? null : Tooltip.of(text);
+		return (b) -> text.getString().isEmpty() ? null : Tooltip.create(text);
 	}
 
 	private static String translationKey(String name)
@@ -160,65 +160,66 @@ public class ConfigScreen extends GameOptionsScreen
 		return "option.bettercoppergolem." + name;
 	}
 
-	private class Container extends ContainerWidget 
+	private class Container extends AbstractContainerWidget 
 	{
-		private List<ClickableWidget> children = new ArrayList<>();
+		private List<AbstractWidget> children = new ArrayList<>();
 		private int spacing;
 
-	    public Container(int width, int height, List<ClickableWidget> children) 
+	    public Container(int width, int height, List<AbstractWidget> children) 
 		{
 	    	this(width, height, children, 0);
 		}
 
-	    public Container(int width, int height, List<ClickableWidget> children, int spacing) 
+	    public Container(int width, int height, List<AbstractWidget> children, int spacing) 
 		{
-			super(0, 0, width, height, ScreenTexts.EMPTY);
+			super(0, 0, width, height, CommonComponents.EMPTY);
 			this.children = children;
 			this.spacing = spacing;
 		}
-	    
-		protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) 
+
+		@Override
+		protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTicks)
 		{
-			context.enableScissor(getX(), getY(), getX() + width, getY() + height);
+			guiGraphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
 
 			int x = getX(), y = getY();
-			for(ClickableWidget widget : children) 
+			for(AbstractWidget widget : children) 
 			{
 				widget.setPosition(x, y);
-				widget.render(context, mouseX, mouseY, deltaTicks);
+				widget.render(guiGraphics, mouseX, mouseY, deltaTicks);
 				x += widget.getWidth() + spacing;
 			}
 
-			context.disableScissor();
+			guiGraphics.disableScissor();
 		}
 
 		@Override
-		public List<? extends Element> children() 
+		public List<? extends GuiEventListener> children() 
 		{
 			return children;
 		}
-
-		@Override
-		protected int getContentsHeightWithPadding() 
-		{
-			return getHeight();
-		}
-
-		@Override
-		protected double getDeltaYPerScroll() 
-		{
-			return 0;
-		}
-
-		@Override
-		protected void appendClickableNarrations(NarrationMessageBuilder builder) { }
 		
 		@Override
 		public void setFocused(boolean focused) 
 		{
 			super.setFocused(focused);
-			if(!focused) for(ClickableWidget widget : children) widget.setFocused(false);
+			if(!focused) for(AbstractWidget widget : children) widget.setFocused(false);
 		}
+
+		@Override
+		protected int contentHeight() 
+		{
+			return getHeight();
+		}
+
+		@Override
+		protected double scrollRate() 
+		{
+			return 0;
+		}
+
+		@Override
+		protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }
 	}
 	
 	private interface ChangeListener

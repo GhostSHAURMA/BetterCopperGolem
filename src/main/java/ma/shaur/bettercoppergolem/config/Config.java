@@ -1,7 +1,5 @@
 package ma.shaur.bettercoppergolem.config;
 
-import net.minecraft.text.Text;
-
 @SuppressWarnings("unused")
 public class Config 
 {

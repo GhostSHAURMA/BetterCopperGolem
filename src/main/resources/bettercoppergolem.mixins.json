@@ -3,10 +3,10 @@
 	"package": "ma.shaur.bettercoppergolem.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"CopperGolemEntityMixin",
-		"MoveItemsTaskMixin",
-		"ContainerComponentAccessor",
-		"CopperGolemBrainMixin"
+		"CopperGolemMixin",
+		"TransportItemsBetweenContainersMixin",
+		"ItemContainerContentsAccessor",
+		"CopperGolemAiMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
