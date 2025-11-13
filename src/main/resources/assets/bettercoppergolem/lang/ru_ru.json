@@ -33,6 +33,9 @@
 	"option.bettercoppergolem.vertical_range":"Максимальная высота",
 	"option.bettercoppergolem.vertical_range.info":"Высота, до которой големы могут дотянуться(могут возникнуть проблемы с тем, чтобы найти до них путь)",
 	
+	"option.bettercoppergolem.horizontal_range":"Максимальная дистанция",
+	"option.bettercoppergolem.horizontal_range.info":"Дистанция, которую големы будут проверять на наличие сундуков",
+	
 	"option.bettercoppergolem.interaction_time":"Время взаимодейтсвия",
 	"option.bettercoppergolem.interaction_time.info":"Время в тиках(1/20ая секунды), которое големы будут тратить на просмотр одного сундука(Ломает анимации)"
 }

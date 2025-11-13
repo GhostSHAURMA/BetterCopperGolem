@@ -11,8 +11,14 @@ import net.minecraft.world.entity.animal.coppergolem.CopperGolemAi;
 public class CopperGolemAiMixin 
 {
 	@ModifyConstant(method ="initIdleActivity", constant = @Constant(intValue = 8))
-	private static int verticalHeight(int constant)
+	private static int verticalRange(int constant)
 	{
 		return ConfigHandler.getConfig().verticalRange + 10;
+	}
+	
+	@ModifyConstant(method ="initIdleActivity", constant = @Constant(intValue = 32))
+	private static int horizontalRange(int constant)
+	{
+		return ConfigHandler.getConfig().horizontalRange + 10;
 	}
 }

@@ -103,6 +103,8 @@ public class ConfigScreen extends OptionsSubScreen
 					  intContainer(Component.translatable(translationKey("vertical_range")), Component.translatable(translationKey("vertical_range.info")), config.verticalRange, i -> config.verticalRange = i));
 		list.addSmall(intContainer(Component.translatable(translationKey("interaction_time")),Component.translatable(translationKey("interaction_time.info")), config.interactionTime, i -> config.interactionTime = i),
 					  OptionInstance.createBoolean(translationKey("match_oxidation_level"), tooltipFactory("match_oxidation_level"), config.matchOxidationLevel, b -> config.matchOxidationLevel = b).createButton(options));
+		list.addSmall(intContainer(Component.translatable(translationKey("horizontal_range")),Component.translatable(translationKey("horizontal_range.info")), config.horizontalRange, i -> config.horizontalRange = i),
+					  null);
 	}
 	
 	private Container intContainer(Component text, Component tooltip, int value, ChangeListener listener)

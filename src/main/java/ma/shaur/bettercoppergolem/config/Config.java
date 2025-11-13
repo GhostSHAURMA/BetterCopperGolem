@@ -22,6 +22,8 @@ public class Config
 	public int cooldownTime = 140;
 	
 	public int verticalRange = 2;
+	
+	public int horizontalRange = 32;
 
 	public int interactionTime = 60;
 	

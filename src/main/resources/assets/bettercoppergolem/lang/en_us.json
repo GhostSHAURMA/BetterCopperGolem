@@ -33,6 +33,9 @@
 	"option.bettercoppergolem.vertical_range":"Vertical range",
 	"option.bettercoppergolem.vertical_range.info":"How high can golems reach(pathfinding is a bit scuffed tho)",
 	
+	"option.bettercoppergolem.horizontal_range":"Horizontal range",
+	"option.bettercoppergolem.horizontal_range.info":"How far will golems search",
+	
 	"option.bettercoppergolem.interaction_time":"Interaction time",
 	"option.bettercoppergolem.interaction_time.info":"Time in ticks(1/20th of a second) golems will spend looking through a single chest(breaks animations)"
 }
