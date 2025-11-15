@@ -91,7 +91,7 @@ public abstract class TransportItemsBetweenContainersMixin
 		return ConfigHandler.getConfig().cooldownTime;
 	}
 
-	@ModifyArg(method = "onReachedTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;doReachedTargetInteraction"), index = 2)
+	@ModifyArg(method = "onReachedTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;doReachedTargetInteraction(Lnet/minecraft/world/entity/PathfinderMob;Lnet/minecraft/world/Container;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;)V"), index = 2)
 	private BiConsumer<PathfinderMob, Container> pickupItemCallback(BiConsumer<PathfinderMob, Container> pickupItemCallback)
 	{
 		return this::betterPickUpItems;
@@ -134,7 +134,7 @@ public abstract class TransportItemsBetweenContainersMixin
 		return firstMatch < 0 ? ItemStack.EMPTY : inventory.removeItem(firstMatch, matchAmmount);
 	}
 	
-	@ModifyArg(method = "onReachedTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;doReachedTargetInteraction"), index = 4)
+	@ModifyArg(method = "onReachedTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;doReachedTargetInteraction(Lnet/minecraft/world/entity/PathfinderMob;Lnet/minecraft/world/Container;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;)V"), index = 4)
 	private BiConsumer<PathfinderMob, Container> placeItemCallback(BiConsumer<PathfinderMob, Container> pickupItemCallback)
 	{
 		return this::betterPutDownItem;
@@ -250,7 +250,7 @@ public abstract class TransportItemsBetweenContainersMixin
 	}
 
 	//Kinda silly, can't think of a better way for now
-	@Redirect(method = "updateInvalidTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;setVisitedBlockPos"))
+	@Redirect(method = "updateInvalidTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;setVisitedBlockPos(Lnet/minecraft/world/entity/PathfinderMob;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
 	private void betterSetVisitedBlockPos(TransportItemsBetweenContainers moveItemsTask, PathfinderMob entity, Level world, BlockPos pos, ServerLevel paramWorld, PathfinderMob paramEntity)
 	{
 		if(!(entity instanceof LastItemDataHolder)) 
@@ -281,7 +281,7 @@ public abstract class TransportItemsBetweenContainersMixin
 	}
 	
 	//I am become lag, the destroyer of TPS
-	@Redirect(method = "matchesLeavingItemsRequirement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;hasItemMatchingHandItem"))
+	@Redirect(method = "matchesLeavingItemsRequirement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers;hasItemMatchingHandItem(Lnet/minecraft/world/entity/PathfinderMob;Lnet/minecraft/world/Container;)Z"))
 	private static boolean betterHasItemMatchingHandItem(PathfinderMob entity, Container inventory, PathfinderMob paramEntity, Container paramInventory)
 	{
 		ItemStack hand = entity.getMainHandItem();
