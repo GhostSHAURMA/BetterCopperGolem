@@ -16,4 +16,4 @@ public class BetterCopperGolem implements ModInitializer
 	{
 		ConfigHandler.init();
 	}
-}  
+}
