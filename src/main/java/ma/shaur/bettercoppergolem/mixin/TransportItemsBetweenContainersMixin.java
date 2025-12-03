@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.CopperChestBlock;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -151,6 +152,7 @@ public abstract class TransportItemsBetweenContainersMixin
 		else 
 		{
 			this.stopTargetingCurrentTarget(entity);
+			if(inventory instanceof BaseContainerBlockEntity blockEntity) setVisitedBlockPos(entity, entity.level(), blockEntity.getBlockPos());
 		}
 	}
 
@@ -204,7 +206,7 @@ public abstract class TransportItemsBetweenContainersMixin
 					ItemContainerContents component = componentMap.get(DataComponents.CONTAINER);
 					List<ItemStack> stacks = ((ItemContainerContentsAccessor)(Object) component).getItems();
 					int j = 0;
-					for(; j < stacks.size(); j++)
+					for(; j < 27; j++)
 					{
 						ItemStack stack = stacks.get(j);
 						if(stack.isEmpty())
@@ -290,6 +292,8 @@ public abstract class TransportItemsBetweenContainersMixin
 		boolean emptySpaces = false, shouldPlace = false, shouldInsert = false;
 		for(ItemStack stack : inventory)
 		{
+			if(shouldPlace && emptySpaces || shouldInsert) return true;
+			
 			if(stack.isEmpty()) 
 			{
 				emptySpaces = true;
@@ -299,10 +303,10 @@ public abstract class TransportItemsBetweenContainersMixin
 			if(!hand.getComponents().has(DataComponents.BUNDLE_CONTENTS) && !hand.getComponents().has(DataComponents.CONTAINER) && ItemStack.isSameItem(stack, hand)) 
 			{
 				shouldPlace = true;
-				if(stack.getCount() < stack.getMaxStackSize())
+				if(stack.getCount() < stack.getMaxStackSize() && ItemStack.isSameItemSameComponents(stack, hand))
 				{
 					emptySpaces = true;
-					break;
+					continue;
 				}
 			}
 			
