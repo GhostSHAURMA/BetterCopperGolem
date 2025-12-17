@@ -206,7 +206,7 @@ public abstract class TransportItemsBetweenContainersMixin
 					ItemContainerContents component = componentMap.get(DataComponents.CONTAINER);
 					List<ItemStack> stacks = ((ItemContainerContentsAccessor)(Object) component).getItems();
 					int j = 0;
-					for(; j < 27; j++)
+					for(; j < stacks.size(); j++)
 					{
 						ItemStack stack = stacks.get(j);
 						if(stack.isEmpty())
