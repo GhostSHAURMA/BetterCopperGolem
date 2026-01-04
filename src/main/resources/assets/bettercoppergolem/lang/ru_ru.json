@@ -7,7 +7,7 @@
 	
 	"option.bettercoppergolem.ignore_color":"Игнорировать цвет",
 	"option.bettercoppergolem.ignore_color.info":"Полностью игнорировать цвет шалкеровых ящиков и мешков при сортировке",
-	"option.bettercoppergolem.ignore_color.info.true":"Включено - цвет шалкеровых ящиков и мешков не будет учитываться, когла их кладут их в сундук",
+	"option.bettercoppergolem.ignore_color.info.true":"Включено - цвет шалкеровых ящиков и мешков не будет учитываться, когда их кладут их в сундук",
 	"option.bettercoppergolem.ignore_color.info.false":"Выключено - все крашенные шалкеровые ящики и мешки будут сортироваться по цвету, не крашенные - по содержимому",
 	
 	"option.bettercoppergolem.allow_individual_items_match_container_contents":"Учитывать содержимое контейнеров",
@@ -22,7 +22,7 @@
 	"option.bettercoppergolem.match_oxidation_level.info":"Разрешать големам проверять только сундуки с тем же уровнем окисления, что и голем",
 	
 	"option.bettercoppergolem.max_chest_check_count":"Макс. посещаемых сундуков",
-	"option.bettercoppergolem.max_chest_check_count.info":"Максимальное колличество сундуков, посищаемых големами перед перерывом",
+	"option.bettercoppergolem.max_chest_check_count.info":"Максимальное количество сундуков, посещаемых големами перед перерывом",
 	
 	"option.bettercoppergolem.max_held_item_stack_size":"Макс. кол-во предметов",
 	"option.bettercoppergolem.max_held_item_stack_size.info":"Максимальный размер стаков, переносимых големами",
