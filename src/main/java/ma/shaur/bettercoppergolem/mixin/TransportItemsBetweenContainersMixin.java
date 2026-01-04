@@ -109,6 +109,7 @@ public abstract class TransportItemsBetweenContainersMixin
 		ItemStack itemStack = betterPickupItemFromContainer(entity, inventory);
 		entity.setItemSlot(EquipmentSlot.MAINHAND, itemStack);
 		entity.setGuaranteedDrop(EquipmentSlot.MAINHAND);
+		inventory.setChanged();
 		if(!(entity instanceof LastItemDataHolder lastStackHolder && !lastStackHolder.getLastItemStack().isEmpty() && ItemStack.isSameItem(lastStackHolder.getLastItemStack(), itemStack))) this.clearMemoriesAfterMatchingTargetFound(entity);
 	}
 	
@@ -144,6 +145,7 @@ public abstract class TransportItemsBetweenContainersMixin
 	private void betterPutDownItem(PathfinderMob entity, Container inventory) 
 	{
 		ItemStack itemStack = betterAddItemsToContainer(entity, inventory);
+		inventory.setChanged();
 		entity.setItemSlot(EquipmentSlot.MAINHAND, itemStack);
 		if (itemStack.isEmpty()) 
 		{
