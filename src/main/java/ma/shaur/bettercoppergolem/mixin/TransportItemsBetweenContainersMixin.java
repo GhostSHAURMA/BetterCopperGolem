@@ -196,7 +196,7 @@ public abstract class TransportItemsBetweenContainersMixin
 				if(componentMap.has(DataComponents.BUNDLE_CONTENTS))
 				{
 					BundleContents component = componentMap.get(DataComponents.BUNDLE_CONTENTS);
-					BundleContents.Mutable componentBuilder = new BundleContents.Mutable(component);
+					BundleContents.Mutable componentBuilder = component.asMutable();
 					if(componentBuilder.tryInsert(hand) > 0) itemStack.set(DataComponents.BUNDLE_CONTENTS, componentBuilder.toImmutable());
 					
 					if (hand.isEmpty()) 
@@ -321,7 +321,7 @@ public abstract class TransportItemsBetweenContainersMixin
 						if(ItemStack.isSameItemSameComponents(stack, hand)) shouldPlace = true;
 						continue;
 					}
-					else if(hand.getComponents().get(DataComponents.BUNDLE_CONTENTS).itemCopyStream().parallel().filter(i -> !component.itemCopyStream().parallel().anyMatch(j -> ItemStack.isSameItemSameComponents(i, j))).findAny().isEmpty())
+					else if(hand.getComponents().get(DataComponents.BUNDLE_CONTENTS).itemCopies().parallel().filter(i -> !component.itemCopies().parallel().anyMatch(j -> ItemStack.isSameItemSameComponents(i, j))).findAny().isEmpty())
 					{
 						shouldPlace = true;
 						continue;
@@ -329,11 +329,11 @@ public abstract class TransportItemsBetweenContainersMixin
 				}
 				else if(config.allowInsertingItemsIntoContainers || config.allowIndividualItemsMatchContainerContents)
 				{
-					Stream<ItemStack> stream = component.itemCopyStream().parallel();
+					Stream<ItemStack> stream = component.itemCopies().parallel();
 					if(stream.anyMatch(i -> ItemStack.isSameItem(hand, i)))
 					{
 						shouldPlace = config.allowIndividualItemsMatchContainerContents;
-						if(config.allowInsertingItemsIntoContainers) shouldInsert = new BundleContents.Mutable(component).tryInsert(hand.copy()) > 0;
+						if(config.allowInsertingItemsIntoContainers) shouldInsert = component.asMutable().tryInsert(hand.copy()) > 0;
 						continue;
 					}
 				}
@@ -349,7 +349,7 @@ public abstract class TransportItemsBetweenContainersMixin
 						if(ItemStack.isSameItemSameComponents(stack, hand)) shouldPlace = true;
 						continue;
 					}
-					else if(hand.getComponents().get(DataComponents.CONTAINER).allItemsCopyStream().parallel().filter(i -> !component.allItemsCopyStream().parallel().anyMatch(j -> ItemStack.isSameItemSameComponents(i, j))).findAny().isEmpty())
+					else if(hand.getComponents().get(DataComponents.CONTAINER).itemCopies().parallel().filter(i -> !component.itemCopies().parallel().anyMatch(j -> ItemStack.isSameItemSameComponents(i, j))).findAny().isEmpty())
 					{
 						shouldPlace = true;
 						continue;
@@ -357,7 +357,7 @@ public abstract class TransportItemsBetweenContainersMixin
 				}
 				else if(config.allowInsertingItemsIntoContainers || config.allowIndividualItemsMatchContainerContents)
 				{
-					Stream<ItemStack> stream = component.allItemsCopyStream().parallel();
+					Stream<ItemStack> stream = component.itemCopies().parallel();
 					if(stream.anyMatch(i -> ItemStack.isSameItem(hand, i)))
 					{
 						shouldPlace = config.allowIndividualItemsMatchContainerContents;
@@ -389,3 +389,4 @@ public abstract class TransportItemsBetweenContainersMixin
 		return shouldPlace && emptySpaces || shouldInsert;
 	}
 }
+
